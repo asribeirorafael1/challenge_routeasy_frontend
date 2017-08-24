@@ -1,0 +1,50 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/>
+    <link rel="stylesheet" href="plugins/material-design-lite/material-design-lite.min.css"/>
+    <link rel="stylesheet" href="plugins/material-design-lite/material-design-lite-icon.css"/>
+    <link rel="stylesheet" href="css/styles.css"/>
+    <title>Rausi</title>
+</head>
+<body>
+<div id="app">
+    <router-view></router-view>
+</div>
+
+<script src="plugins/vue/vue.min.js"></script>
+<script src="plugins/vue-router/vue-router.min.js"></script>
+<script defer src="plugins/material-design-lite/material-design-lite.min.js"></script>
+<script src="plugins/lodash/lodash.min.js"></script>
+
+<!-- Configurations -->
+<script src="configs/config.development.js"></script>
+
+<!-- Services -->
+<script src="services/local/local.service.js"></script>
+<script src="services/api/api.service.js"></script>
+<script src="services/alert/alert.service.js"></script>
+
+<!-- Modules -->
+
+<!-- Module: Real Estate -->
+<script src="modules/deliveries-front/deliveries.model.js"></script>
+<script src="modules/deliveries-front/deliveries.add.get.remove.component.js"></script>
+<script src="modules/deliveries-front/deliveries.view.component.js"></script>
+
+<!-- Initialization -->
+<script src="bin/bin.boot.js"></script>
+<script src="bin/bin.router.js"></script>
+
+<!-- Modals -->
+
+<!-- Modal: Alert -->
+<div id="alert-modal" class="mdl-js-snackbar mdl-snackbar">
+    <div class="mdl-snackbar__text"></div>
+    <button class="mdl-snackbar__action" type="button"></button>
+</div>
+
+</body>
+</html>

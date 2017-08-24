@@ -1,0 +1,15 @@
+body {
+    width: 100%;
+    height: 100%;
+}
+
+#app {
+    width: 100%;
+    height: 100%;
+}
+
+.back-button-header {
+    width: 93px;
+    height: 93px;
+    transform: translate(-50%, -50%) translate(19px, 14px);
+}
