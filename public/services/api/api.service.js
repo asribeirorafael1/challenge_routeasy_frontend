@@ -15,6 +15,15 @@ window.APIService.get = function (route, done) {
     xhr.send();
 };
 
+window.APIService.getGoogleApiMap = function (route, done) {
+    var xhr = new XMLHttpRequest();
+
+    xhr.open('GET', route);
+
+    xhr.onreadystatechange = _onReadyStateChange(xhr, done);
+    xhr.send();
+};
+
 window.APIService.post = function (route, ObjectSend, done) {
     var xhr = new XMLHttpRequest();
     var token = window.LocalService.getString('token');
