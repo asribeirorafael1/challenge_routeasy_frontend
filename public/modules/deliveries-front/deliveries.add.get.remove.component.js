@@ -76,6 +76,27 @@ window.DeliveriesAddGetRemoveComponent = Vue.extend({
                     return window.AlertService.error(Response.message);
                 }
 
+                self.$set('GeoInfoObject', {});
+                self.$set('ObjectO', {
+                    _id: '',
+                    nome_cliente:'',
+                    peso_em_kg: '',
+                    endereco: {
+                        logradouro: '',
+                        numero: '',
+                        bairro: '',
+                        complemento: '',
+                        cidade: '',
+                        estado: '',
+                        pais: '',
+                        geolocalizacao: {
+                            lng: 0,
+                            lat: 0
+                        }
+                    }
+                });
+                self.$set('enderecoFull', '');
+
                 window.DeliveriesModel.getAll(_onGetAll);
 
                 function _onGetAll(Response) {
