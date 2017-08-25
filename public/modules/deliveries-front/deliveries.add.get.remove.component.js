@@ -1,9 +1,22 @@
-//noinspection JSUnusedGlobalSymbols
 window.DeliveriesAddGetRemoveComponent = Vue.extend({
     data: {
         Object: {
-            email: '',
-            password: ''
+            _id: '',
+            nome_cliente:'',
+            peso_em_kg: '',
+            endereco: {
+                logradouro: '',
+                numero: '',
+                bairro: '',
+                complemento: '',
+                cidade: '',
+                estado: '',
+                pais: '',
+                geolocalizacao: {
+                    lng: 0,
+                    lat: 0
+                }
+            }
         }
     },
     template: '<div class="mdl-layout mdl-js-layout mdl-color--grey-100">' +
@@ -11,7 +24,7 @@ window.DeliveriesAddGetRemoveComponent = Vue.extend({
     '        <div class="mdl-card mdl-shadow--6dp">' +
     '            <div class="mdl-card__title mdl-color--primary mdl-color-text--white">' +
 
-    '               <h2 class="mdl-card__title-text">Rausi - Criar Imobiliária</h2>' +
+    '               <h2 class="mdl-card__title-text">Challenge RoutEasy</h2>' +
 
     '               <button id="demo-menu-lower-right"' +
     '                   class="mdl-button mdl-js-button mdl-button--icon">' +
@@ -52,7 +65,6 @@ window.DeliveriesAddGetRemoveComponent = Vue.extend({
                 }
 
                 alert('\\o/');
-                //return router.go('/login');
             }
         },
         getAll: function () {
@@ -61,6 +73,20 @@ window.DeliveriesAddGetRemoveComponent = Vue.extend({
             window.DeliveriesModel.getAll(_onGetAll);
 
             function _onGetAll(Response) {
+                if (!Response.status) {
+                    window.AlertService.error(Response.message);
+                    return false;
+                }
+
+                self.$set('Deliveries', Response.Response);
+            }
+        },
+        remove: function () {
+            var self = this;
+
+            window.DeliveriesModel.remove(this.Object._id, _onRemove);
+
+            function _onRemove(Response) {
                 if (!Response.status) {
                     window.AlertService.error(Response.message);
                     return false;
