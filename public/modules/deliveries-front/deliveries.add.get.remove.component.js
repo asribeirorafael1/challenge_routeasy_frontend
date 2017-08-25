@@ -54,9 +54,8 @@ window.DeliveriesAddGetRemoveComponent = Vue.extend({
     '               <button class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" v-on:click="remove">Resetar Cadastro</button>' +
     '           </div>' +
     '       </div>'+
-    '       <div style="float: right">'+
-    '           <div>'+
-    '               Mapa'+
+    '       <div>'+
+    '           <div id="mapid">'+
     '           </div>'+
     '           <div>'+
     '               Tabela'+
