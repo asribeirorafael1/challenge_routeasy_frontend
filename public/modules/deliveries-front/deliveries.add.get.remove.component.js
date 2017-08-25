@@ -4,6 +4,7 @@ window.DeliveriesAddGetRemoveComponent = Vue.extend({
             _id: '',
             nome_cliente:'',
             peso_em_kg: '',
+            enderecoFull: '',
             endereco: {
                 logradouro: '',
                 numero: '',
@@ -19,42 +20,46 @@ window.DeliveriesAddGetRemoveComponent = Vue.extend({
             }
         }
     },
-    template: '<div class="mdl-layout mdl-js-layout mdl-color--grey-100">' +
-    '    <main class="mdl-layout__content">' +
-    '        <div class="mdl-card mdl-shadow--6dp">' +
-    '            <div class="mdl-card__title mdl-color--primary mdl-color-text--white">' +
-
-    '               <h2 class="mdl-card__title-text">Challenge RoutEasy</h2>' +
-
-    '               <button id="demo-menu-lower-right"' +
-    '                   class="mdl-button mdl-js-button mdl-button--icon">' +
-    '                       <i class="material-icons">more_vert</i>' +
-    '               </button>' +
-
-    '               <ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect"' +
-    '                   for="demo-menu-lower-right">' +
-    '                   <li class="mdl-menu__item" v-on:click="logout">Sair</li>' +
-    '               </ul>' +
-
-    '            </div>' +
-    '            <div class="mdl-card__supporting-text">' +
-    '                <form action="#">' +
-    '                    <div class="mdl-textfield mdl-js-textfield">' +
-    '                        <input class="mdl-textfield__input" type="text" id="real-state-name" v-model="Object.name"/>' +
-    '                        <label class="mdl-textfield__label" for="real-state-name">Nome</label>' +
-    '                    </div>' +
-    '                    <div class="mdl-textfield mdl-js-textfield">' +
-    '                        <input class="mdl-textfield__input" type="text" id="real-state-description" v-model="Object.description"/>' +
-    '                        <label class="mdl-textfield__label" for="real-state-description">Descrição</label>' +
-    '                    </div>' +
-    '                </form>' +
-    '            </div>' +
-    '            <div class="mdl-card__actions mdl-card--border">' +
-    '                <button class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" v-on:click="add">Cadastrar</button>' +
-    '            </div>' +
-    '        </div>' +
-    '    </main>' +
-    '</div>',
+    template:
+    '<main>' +
+    '   <div class="outPopUp">'+
+    '       <div class="flex-container bFlex" style="float: left; width: 300px;">'+
+    '           <div class="flex-item">' +
+    '               <form action="#">' +
+    '                   <div class="mdl-textfield mdl-js-textfield">' +
+    '                       <input class="mdl-textfield__input" type="text" id="deliveries-cliente" v-model="Object.nome_cliente"/>' +
+    '                       <label class="mdl-textfield__label" for="deliveries-nome-cliente">Nome Cliente</label>' +
+    '                   </div>' +
+    '                   <div class="mdl-textfield mdl-js-textfield">' +
+    '                       <input class="mdl-textfield__input" type="text" id="deliveries-peso" v-model="Object.peso_em_kg"/>' +
+    '                       <label class="mdl-textfield__label" for="deliveries-peso">Peso da Entrega</label>' +
+    '                   </div>' +
+    '                   <div class="mdl-textfield mdl-js-textfield">' +
+    '                       <input class="mdl-textfield__input" type="text" id="deliveries-enderecofull" v-model="Object.enderecoFull"/>' +
+    '                       <label class="mdl-textfield__label" for="deliveries-enderecofull">Endereço Cliente</label>' +
+    '                   </div>' +
+    '               </form>' +
+    '           </div>' +
+    '           <div>' +
+    '               <button class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" v-on:click="search">Buscar</button>' +
+    '           </div>' +
+    '           <div>' +
+    '               <button class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" v-on:click="add">Cadastrar Cliente</button>' +
+    '           </div>' +
+    '           <div>' +
+    '               <button class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" v-on:click="remove">Resetar Cadastro</button>' +
+    '           </div>' +
+    '       </div>'+
+    '       <div style="float: right">'+
+    '           <div>'+
+    '               Mapa'+
+    '           </div>'+
+    '           <div>'+
+    '               Tabela'+
+    '           </div>'+
+    '       </div>'+
+    '   </div>'+
+    '</main>',
     methods: {
         add: function () {
             window.DeliveriesModel.add(this.Object, _onAddDeliveries);
@@ -66,6 +71,9 @@ window.DeliveriesAddGetRemoveComponent = Vue.extend({
 
                 alert('\\o/');
             }
+        },
+        search: function () {
+            console.log("Endereço Completo:" + this.Object.enderecoFull);
         },
         getAll: function () {
             var self = this;
@@ -84,7 +92,7 @@ window.DeliveriesAddGetRemoveComponent = Vue.extend({
         remove: function () {
             var self = this;
 
-            window.DeliveriesModel.remove(this.Object._id, _onRemove);
+            window.DeliveriesModel.remove(_onRemove);
 
             function _onRemove(Response) {
                 if (!Response.status) {
