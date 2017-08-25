@@ -1,5 +1,9 @@
 window.DeliveriesAddGetRemoveComponent = Vue.extend({
+    ready: function () {
+        this.getAll();
+    },
     data: {
+        DeliveriesAll: [],
         Object: {
             _id: '',
             nome_cliente:'',
@@ -69,7 +73,18 @@ window.DeliveriesAddGetRemoveComponent = Vue.extend({
                     return window.AlertService.error(Response.message);
                 }
 
-                alert('\\o/');
+                var self = this;
+
+                window.DeliveriesModel.getAll(_onGetAll);
+
+                function _onGetAll(Response) {
+                    if (!Response.status) {
+                        window.AlertService.error(Response.message);
+                        return false;
+                    }
+
+                    self.$set('DeliveriesAll', Response.Response);
+                }
             }
         },
         search: function () {
@@ -86,7 +101,7 @@ window.DeliveriesAddGetRemoveComponent = Vue.extend({
                     return false;
                 }
 
-                self.$set('Deliveries', Response.Response);
+                self.$set('DeliveriesAll', Response.Response);
             }
         },
         remove: function () {
@@ -100,7 +115,7 @@ window.DeliveriesAddGetRemoveComponent = Vue.extend({
                     return false;
                 }
 
-                self.$set('Deliveries', Response.Response);
+                self.$set('DeliveriesAll', Response.Response);
             }
         }
     }
