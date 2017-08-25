@@ -2,14 +2,9 @@ window.APIService = {};
 
 window.APIService.get = function (route, done) {
     var xhr = new XMLHttpRequest();
-    var token = window.LocalService.getString('token');
 
     xhr.open('GET', window.Config.API.url + '/' + route);
     xhr.setRequestHeader('Content-Type', 'application/json');
-
-    if (token) {
-        xhr.setRequestHeader('Authorization', token);
-    }
 
     xhr.onreadystatechange = _onReadyStateChange(xhr, done);
     xhr.send();
@@ -26,16 +21,11 @@ window.APIService.getGoogleApiMap = function (route, done) {
 
 window.APIService.post = function (route, ObjectSend, done) {
     var xhr = new XMLHttpRequest();
-    var token = window.LocalService.getString('token');
 
     ObjectSend = JSON.stringify(ObjectSend);
 
     xhr.open('POST', window.Config.API.url + '/' + route);
     xhr.setRequestHeader('Content-Type', 'application/json');
-
-    if (token) {
-        xhr.setRequestHeader('Authorization', token);
-    }
 
     xhr.onreadystatechange = _onReadyStateChange(xhr, done);
     xhr.send(ObjectSend);

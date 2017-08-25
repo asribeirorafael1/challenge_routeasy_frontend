@@ -1,14 +1,12 @@
 window.DeliveriesAddGetRemoveComponent = Vue.extend({
     ready: function () {
         this.getAll();
-        this.mapLoad();
     },
     data: {
         DeliveriesAll: {},
         enderecoFull: '',
         GeoInfoObject: {},
         ObjectO: {
-            _id: '',
             nome_cliente:'',
             peso_em_kg: '',
             endereco: {
@@ -47,6 +45,10 @@ window.DeliveriesAddGetRemoveComponent = Vue.extend({
     '               </form>' +
     '           </div>' +
     '           <div>' +
+    '               <span>Longitude: {{ObjectO.endereco.geolocalizacao.lng}}</span>' +
+    '               <span>Latitude: {{ObjectO.endereco.geolocalizacao.lng}}</span>' +
+    '           </div>' +
+    '           <div>' +
     '               <button class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" v-on:click="search">Buscar</button>' +
     '           </div>' +
     '           <div>' +
@@ -60,7 +62,30 @@ window.DeliveriesAddGetRemoveComponent = Vue.extend({
     '           <div id="mapid">'+
     '           </div>'+
     '           <div>'+
-    '               Tabela'+
+    '               <table class="mdl-data-table mdl-js-data-table mdl-data-table--selectable mdl-shadow--2dp">' +
+    '                   <thead>' +
+    '                       <tr>' +
+    '                           <th class="mdl-data-table__cell--non-numeric">Nome</th>' +
+    '                           <th class="mdl-data-table__cell--non-numeric">Rua</th>' +
+    '                           <th class="mdl-data-table__cell--non-numeric">Cidade</th>' +
+    '	                        <th class="mdl-data-table__cell--non-numeric">País</th>' +
+    '	                        <th>Peso</th>' +
+    '	                        <th>Lat</th>' +
+    '	                        <th>Lng</th>' +
+    '                       </tr>' +
+    '                   </thead>' +
+    '                   <tbody>' +
+    '                       <tr v-for="Delivery in DeliveriesAll">' +
+    '                           <td class="mdl-data-table__cell--non-numeric">{{Delivery.nome_cliente}}</td>' +
+    '	                        <td class="mdl-data-table__cell--non-numeric">{{Delivery.endereco.logradouro}}</td>' +
+    '	                        <td class="mdl-data-table__cell--non-numeric">{{Delivery.endereco.cidade}}</td>' +
+    '	                        <td class="mdl-data-table__cell--non-numeric">{{Delivery.endereco.pais}}</td>' +
+    '	                        <td>{{Delivery.peso_em_kg}}</td>' +
+    '                           <td>{{Delivery.endereco.geolocalizacao.lat}}</td>' +
+    '	                        <td>{{Delivery.endereco.geolocalizacao.lng}}</td>' +
+    '                       </tr>    ' +
+    '                   </tbody>' +
+    '               </table>' +
     '           </div>'+
     '       </div>'+
     '   </div>'+
@@ -73,12 +98,15 @@ window.DeliveriesAddGetRemoveComponent = Vue.extend({
 
             function _onAddDeliveries(Response) {
                 if (!Response.status) {
-                    return window.AlertService.error(Response.message);
+                    // toastr.error("Erro", "Entrega não cadastrada - Verifique as informações");
+                    return false;
+                    // return window.AlertService.error(Response.message);
                 }
+
+                // toastr.success("Sucesso", "Entrega cadastrada com sucesso.");
 
                 self.$set('GeoInfoObject', {});
                 self.$set('ObjectO', {
-                    _id: '',
                     nome_cliente:'',
                     peso_em_kg: '',
                     endereco: {
@@ -105,7 +133,24 @@ window.DeliveriesAddGetRemoveComponent = Vue.extend({
                         return false;
                     }
 
-                    self.$set('DeliveriesAll', JSON.stringify(Response.Response));
+                    self.$set('DeliveriesAll', Response.Response);
+
+                    var mymap = L.map('mapid').setView([-23.533773, -46.625290], 13);
+
+                    L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoiYXNyaWJlaXJvcmFmYWVsIiwiYSI6ImNqNnJkZnl3ZDA3aW4ycXBicHgwYTBkdDEifQ.RglsYACL2vfRhqifEOhkUw', {
+                        maxZoom: 18,
+                        attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
+                        '<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
+                        'Imagery © <a href="http://mapbox.com">Mapbox</a>',
+                        id: 'mapbox.streets'
+                    }).addTo(mymap);
+
+                    var Deliveries = Response.Response;
+
+                    for (var i = 0; i < Deliveries.length; i++) {
+                        var marker = L.marker([Deliveries[i].endereco.geolocalizacao.lat, Deliveries[i].endereco.geolocalizacao.lng]).addTo(mymap);
+                        marker.bindPopup("<b>"+Deliveries[i].nome_cliente+"</b><br>"+Deliveries[i].peso_em_kg+"kg").openPopup();
+                    }
                 }
             }
         },
@@ -116,9 +161,11 @@ window.DeliveriesAddGetRemoveComponent = Vue.extend({
 
             function _onGetGeoInfo(Response) {
                 if (!Response.status) {
-                    window.AlertService.error(Response.message);
+                    // toastr.error("Erro", "Endereço não encontrado, favor verificar as informações digitadas.");
                     return false;
                 }
+
+                // toastr.success("Sucesso", "Endereço encontrado e carregado Latitude e Longitude.");
 
                 var GeoInfoObject = Response.results[0];
 
@@ -141,11 +188,28 @@ window.DeliveriesAddGetRemoveComponent = Vue.extend({
 
             function _onGetAll(Response) {
                 if (!Response.status) {
-                    window.AlertService.error(Response.message);
+                    // toastr.error("Erro", "Ocorreu um erro e as entregas não puderam ser retornadas.");
                     return false;
                 }
 
-                self.$set('DeliveriesAll', JSON.stringify(Response.Response));
+                self.$set('DeliveriesAll', Response.Response);
+
+                var mymap = L.map('mapid').setView([-23.533773, -46.625290], 13);
+
+                L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoiYXNyaWJlaXJvcmFmYWVsIiwiYSI6ImNqNnJkZnl3ZDA3aW4ycXBicHgwYTBkdDEifQ.RglsYACL2vfRhqifEOhkUw', {
+                    maxZoom: 18,
+                    attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
+                    '<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
+                    'Imagery © <a href="http://mapbox.com">Mapbox</a>',
+                    id: 'mapbox.streets'
+                }).addTo(mymap);
+
+                var Deliveries = Response.Response;
+
+                for (var i = 0; i < Deliveries.length; i++) {
+                    var marker = L.marker([Deliveries[i].endereco.geolocalizacao.lat, Deliveries[i].endereco.geolocalizacao.lng]).addTo(mymap);
+                    marker.bindPopup("<b>"+Deliveries[i].nome_cliente+"</b><br>"+Deliveries[i].peso_em_kg+"kg").openPopup();
+                }
             }
         },
         remove: function () {
@@ -155,23 +219,31 @@ window.DeliveriesAddGetRemoveComponent = Vue.extend({
 
             function _onRemove(Response) {
                 if (!Response.status) {
-                    window.AlertService.error(Response.message);
+                    // toastr.error("Erro", "Ocorreu um erro ao remover todas as entregas.");
                     return false;
                 }
 
-                self.$set('DeliveriesAll', Response.Response);
-            }
-        },
-        mapLoad: function() {
-            var mymap = L.map('mapid').setView([-23.533773, -46.625290], 13);
+                // toastr.success("Sucesso", "Entregas removidas com sucesso.");
 
-            L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoiYXNyaWJlaXJvcmFmYWVsIiwiYSI6ImNqNnJkZnl3ZDA3aW4ycXBicHgwYTBkdDEifQ.RglsYACL2vfRhqifEOhkUw', {
-                maxZoom: 18,
-                attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
-                '<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
-                'Imagery © <a href="http://mapbox.com">Mapbox</a>',
-                id: 'mapbox.streets'
-            }).addTo(mymap);
+                self.$set('DeliveriesAll', Response.Response);
+
+                var mymap = L.map('mapid').setView([-23.533773, -46.625290], 13);
+
+                L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoiYXNyaWJlaXJvcmFmYWVsIiwiYSI6ImNqNnJkZnl3ZDA3aW4ycXBicHgwYTBkdDEifQ.RglsYACL2vfRhqifEOhkUw', {
+                    maxZoom: 18,
+                    attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
+                    '<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
+                    'Imagery © <a href="http://mapbox.com">Mapbox</a>',
+                    id: 'mapbox.streets'
+                }).addTo(mymap);
+
+                var Deliveries = Response.Response;
+
+                for (var i = 0; i < Deliveries.length; i++) {
+                    var marker = L.marker([Deliveries[i].endereco.geolocalizacao.lat, Deliveries[i].endereco.geolocalizacao.lng]).addTo(mymap);
+                    marker.bindPopup("<b>"+Deliveries[i].nome_cliente+"</b><br>"+Deliveries[i].peso_em_kg+"kg").openPopup();
+                }
+            }
         }
     }
 });
